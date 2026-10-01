@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Profile API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .form-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+        
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        
+        input, textarea, select {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+        
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+        
+        .profiles-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+        
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            border: 3px solid white;
+            object-fit: cover;
+        }
+        
+        .profile-username {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .profile-fullname {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .profile-badges {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75em;
+        }
+        
+        .profile-body {
+            padding: 20px;
+        }
+        
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .stat {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        
+        .stat-number {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.75em;
+            color: #999;
+            text-transform: uppercase;
+        }
+        
+        .profile-bio {
+            font-size: 0.95em;
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .profile-contact {
+            font-size: 0.85em;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        
+        .profile-link {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .profile-link:hover {
+            text-decoration: underline;
+        }
+        
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .profile-actions button {
+            flex: 1;
+            padding: 10px;
+            font-size: 0.9em;
+        }
+        
+        .message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .message.success {
+            background: #c6f6d5;
+            color: #22543d;
+            display: block;
+        }
+        
+        .message.error {
+            background: #fed7d7;
+            color: #742a2a;
+            display: block;
+        }
+        
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.2em;
+        }
+        
+        .no-profiles {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📱 Instagram Profile API</h1>
+            <p>Manage and view Instagram-like user profiles</p>
+        </header>
+        
+        <div class="message" id="message"></div>
+        
+        <div class="form-container">
+            <h2 class="form-title">Add New Profile</h2>
+            <form id="profileForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="username">Username *</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userId">User ID</label>
+                        <input type="text" id="userId">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="externalUrl">External URL</label>
+                        <input type="url" id="externalUrl">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="followers">Followers</label>
+                        <input type="number" id="followers" value="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="following">Following</label>
+                        <input type="number" id="following" value="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="posts">Number of Posts</label>
+                        <input type="number" id="posts" value="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tags">Number of Tags</label>
+                        <input type="number" id="tags" value="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="igtvPosts">IGTV Posts</label>
+                        <input type="number" id="igtvPosts" value="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="publicEmail">Public Email</label>
+                        <input type="email" id="publicEmail">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="publicPhone">Public Phone</label>
+                        <input type="tel" id="publicPhone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="obfuscatedEmail">Obfuscated Email</label>
+                        <input type="text" id="obfuscatedEmail">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="obfuscatedPhone">Obfuscated Phone</label>
+                        <input type="text" id="obfuscatedPhone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="profilePic">Profile Picture URL</label>
+                        <input type="url" id="profilePic">
+                    </div>
+                    
+                    <div class="form-group full">
+                        <label for="biography">Biography</label>
+                        <textarea id="biography"></textarea>
+                    </div>
+                    
+                    <div class="form-group full">
+                        <label>Account Status</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="verified">
+                                <label for="verified">Verified</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="businessAccount">
+                                <label for="businessAccount">Business Account</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="privateAccount">
+                                <label for="privateAccount">Private Account</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button type="reset" class="btn-secondary">Clear</button>
+                    <button type="submit" class="btn-primary">Add Profile</button>
+                </div>
+            </form>
+        </div>
+        
+        <div id="profilesContainer" class="profiles-container">
+            <div class="loading">Loading profiles...</div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = '/api/profiles';
+        
+        async function loadProfiles() {
+            try {
+                const response = await fetch(API_BASE);
+                const profiles = await response.json();
+                
+                const container = document.getElementById('profilesContainer');
+                
+                if (profiles.length === 0) {
+                    container.innerHTML = '<div class="no-profiles">No profiles yet. Add one to get started!</div>';
+                    return;
+                }
+                
+                container.innerHTML = profiles.map(profile => `
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            ${profile.profile_picture_url ? `<img src="${profile.profile_picture_url}" alt="${profile.username}" class="profile-pic">` : '<div style="width: 80px; height: 80px; margin: 0 auto 15px; background: rgba(255,255,255,0.2); border-radius: 50%; border: 3px solid white;"></div>'}
+                            <div class="profile-username">@${profile.username}</div>
+                            <div class="profile-fullname">${profile.full_name || 'No name'}</div>
+                            <div class="profile-badges">
+                                ${profile.verified ? '<span class="badge">✓ Verified</span>' : ''}
+                                ${profile.is_business_account ? '<span class="badge">Business</span>' : ''}
+                                ${profile.is_private_account ? '<span class="badge">Private</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="profile-body">
+                            <div class="profile-stats">
+                                <div class="stat">
+                                    <div class="stat-number">${profile.followers}</div>
+                                    <div class="stat-label">Followers</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">${profile.following}</div>
+                                    <div class="stat-label">Following</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">${profile.number_of_posts}</div>
+                                    <div class="stat-label">Posts</div>
+                                </div>
+                            </div>
+                            
+                            ${profile.biography ? `<div class="profile-bio">"${profile.biography}"</div>` : ''}
+                            
+                            ${profile.external_url ? `<div class="profile-contact"><a href="${profile.external_url}" class="profile-link" target="_blank">🔗 Visit Website</a></div>` : ''}
+                            
+                            ${profile.public_email ? `<div class="profile-contact">📧 ${profile.obfuscated_email || profile.public_email}</div>` : ''}
+                            ${profile.public_phone ? `<div class="profile-contact">📱 ${profile.obfuscated_phone || profile.public_phone}</div>` : ''}
+                            
+                            <div class="profile-actions">
+                                <button class="btn-secondary" onclick="editProfile('${profile.username}')">Edit</button>
+                                <button class="btn-danger" onclick="deleteProfile('${profile.username}')">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading profiles:', error);
+                showMessage('Error loading profiles', 'error');
+            }
+        }
+        
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const profileData = {
+                username: document.getElementById('username').value,
+                full_name: document.getElementById('fullName').value,
+                user_id: document.getElementById('userId').value,
+                verified: document.getElementById('verified').checked,
+                is_business_account: document.getElementById('businessAccount').checked,
+                is_private_account: document.getElementById('privateAccount').checked,
+                followers: parseInt(document.getElementById('followers').value),
+                following: parseInt(document.getElementById('following').value),
+                number_of_posts: parseInt(document.getElementById('posts').value),
+                number_of_tags: parseInt(document.getElementById('tags').value),
+                external_url: document.getElementById('externalUrl').value,
+                igtv_posts: parseInt(document.getElementById('igtvPosts').value),
+                biography: document.getElementById('biography').value,
+                public_email: document.getElementById('publicEmail').value,
+                public_phone: document.getElementById('publicPhone').value,
+                obfuscated_email: document.getElementById('obfuscatedEmail').value,
+                obfuscated_phone: document.getElementById('obfuscatedPhone').value,
+                profile_picture_url: document.getElementById('profilePic').value,
+            };
+            
+            try {
+                const response = await fetch(API_BASE, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(profileData)
+                });
+                
+                if (response.ok) {
+                    showMessage('Profile added successfully!', 'success');
+                    document.getElementById('profileForm').reset();
+                    loadProfiles();
+                } else if (response.status === 409) {
+                    showMessage('Username already exists', 'error');
+                } else {
+                    showMessage('Error adding profile', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Error adding profile', 'error');
+            }
+        });
+        
+        async function deleteProfile(username) {
+            if (!confirm(`Delete profile @${username}?`)) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/${username}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showMessage('Profile deleted successfully!', 'success');
+                    loadProfiles();
+                } else {
+                    showMessage('Error deleting profile', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Error deleting profile', 'error');
+            }
+        }
+        
+        function editProfile(username) {
+            alert('Edit feature coming soon! Profile: ' + username);
+        }
+        
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            setTimeout(() => {
+                messageEl.className = 'message';
+            }, 3000);
+        }
+        
+        // Load profiles on page load
+        loadProfiles();
+    </script>
+</body>
+</html>
